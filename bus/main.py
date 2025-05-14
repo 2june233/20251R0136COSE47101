@@ -1,5 +1,6 @@
 import os
 from multi_bus_tracker import MultiBusTracker, BusDataCollector
+from check_validate_key import validate_api_key
 
 # 데이터 저장 디렉토리 생성
 os.makedirs("bus/data", exist_ok=True)
@@ -8,6 +9,9 @@ os.makedirs("bus/data/multi_route", exist_ok=True)
 def main():
     # 공공데이터포털 API 키 입력
     API_KEY = ""
+
+    if not validate_api_key(API_KEY):
+        exit(1)  # 인증 실패 시 종료
     
     # 다중 경로 추적기 초기화
     tracker = MultiBusTracker(api_key=API_KEY)
@@ -36,7 +40,8 @@ def main():
         start_station="청량리.청과물도매시장",
         end_station="안암오거리",
         time_predictions={
-            '8:00-10:00': 7
+            '8:00-10:00': 7,
+            '17:00-19:00': 7
         }
     )
     print("- 경로 2: 2115번 버스 (청량리.청과물도매시장 → 안암오거리)")
@@ -48,7 +53,8 @@ def main():
         start_station="광화문역",
         end_station="홍대입구역",
         time_predictions={
-            '8:00-10:00': 21
+            '8:00-10:00': 21,
+            '17:00-19:00': 23
         }
     )
     print("- 경로 3: 271번 버스 (광화문역 → 홍대입구역)")
@@ -62,7 +68,8 @@ def main():
         time_predictions={
             '8:00-8:10': 4,
             '8:20-8:40': 6,
-            '8:50-10:00': 4
+            '8:50-10:00': 4,
+            '17:00-19:00': 4
         }
     )
     print("- 경로 4: 440번 버스 (지하철2호선강남역 → 신사역3번출구)")
@@ -77,7 +84,11 @@ def main():
             '8:00-8:40': 23,
             '8:50-9:40': 24,
             '9:50': 23,
-            '10:00': 22
+            '10:00': 22,
+            '17:00-17:40': 24,
+            '17:50-18:40': 23,
+            '18:50': 22,
+            '19:00': 21
         }
     )
     print("- 경로 5: 144번 버스 (동대문역사문화공원역8번출구 → 신사역.푸른저축은행)")
