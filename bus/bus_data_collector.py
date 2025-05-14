@@ -460,16 +460,20 @@ class BusDataCollector:
                 if '-' in time_str:
                     # 범위인 경우 시작 시간 사용
                     time_parts = time_str.split('-')
-                    comparison_time_str = time_parts[0]
+                    comparison_time_start_str = time_parts[0]
+                    comparison_time_end_str = time_parts[1]
+                    comparison_time_start = datetime.strptime(comparison_time_start_str, "%H:%M")
+                    comparison_time_end = datetime.strptime(comparison_time_end_str, "%H:%M")
+                    time_diff_minutes_start = abs((time_obj - comparison_time_start).total_seconds() / 60)
+                    time_diff_minutes_end = abs((time_obj - comparison_time_end).total_seconds() / 60)
+                    time_diff_minutes = min(time_diff_minutes_start, time_diff_minutes_end)
+                    
                 else:
                     comparison_time_str = time_str
+                    comparison_time = datetime.strptime(comparison_time_str, "%H:%M")
                 
-                comparison_time = datetime.strptime(comparison_time_str, "%H:%M")
-                
-                # 시간 차이를 분 단위로 계산
-                time_diff_minutes = abs((time_obj - comparison_time).total_seconds() / 60)
-                
-                logging.debug(f"시간 비교: {start_time} vs {comparison_time_str}, 차이: {time_diff_minutes}분")
+                    # 시간 차이를 분 단위로 계산
+                    time_diff_minutes = abs((time_obj - comparison_time).total_seconds() / 60)
                 
                 if time_diff_minutes < min_diff:
                     min_diff = time_diff_minutes
