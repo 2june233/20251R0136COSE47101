@@ -65,7 +65,7 @@ class BusDataCollector:
 
     def get_route_id(self):
         """버스 노선명으로 노선 ID 조회"""
-        url = "http://ws.bus.go.kr/api/rest/busRouteInfo/getBusRouteList"
+        url = "z"
         params = {
             "serviceKey": self.api_key,
             "strSrch": self.bus_route_name,
@@ -270,20 +270,23 @@ class BusDataCollector:
 
         # 출발 정류장 통과 시간 찾기
         start_passage = None
-        for i, pos in enumerate(positions):
-            if pos['ord'] == self.start_station_ord:
-                if i+1 < len(positions) and positions[i+1]['ord'] > self.start_station_ord:
-                    start_passage = pos
-                    break
+        for i in range(1, len(positions)):
+            prev_ord = positions[i-1]['ord']
+            curr_ord = positions[i]['ord']
+
+            if prev_ord == self.start_station_ord - 1 and curr_ord == self.start_station_ord:
+                start_passage = positions[i]
+                break
 
         # 도착 정류장 통과 시간 찾기
         end_passage = None
-        if start_passage:
-            start_idx = positions.index(start_passage)
-            for pos in positions[start_idx+1:]:
-                if pos['ord'] == self.end_station_ord:
-                    end_passage = pos
-                    break
+        for i in range(1, len(positions)):
+            prev_ord = positions[i - 1]['ord']
+            curr_ord = positions[i]['ord']
+
+            if prev_ord == self.end_station_ord - 1 and curr_ord == self.end_station_ord:
+                end_passage = positions[i]
+                break
 
         # 소요 시간 계산
         if start_passage and end_passage:
