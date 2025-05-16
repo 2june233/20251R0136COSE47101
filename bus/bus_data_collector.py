@@ -65,7 +65,7 @@ class BusDataCollector:
 
     def get_route_id(self):
         """버스 노선명으로 노선 ID 조회"""
-        url = "z"
+        url = "http://ws.bus.go.kr/api/rest/busRouteInfo/getBusRouteList"
         params = {
             "serviceKey": self.api_key,
             "strSrch": self.bus_route_name,
