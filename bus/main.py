@@ -10,7 +10,8 @@ def main():
     # 공공데이터포털 API 키 입력
     API_KEY = ""
 
-    file_path="api_key.txt"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_dir, "api_key.txt")
 
     if API_KEY == "":
         if os.path.exists(file_path):
@@ -19,14 +20,15 @@ def main():
 
             if API_KEY:
                 print(f"API 키가 '{file_path}'에서 성공적으로 로드되었습니다.")
-                return API_KEY
             else:
                 print(f"'{file_path}' 파일이 비어 있습니다.")
         else:
             print(f"'{file_path}' 파일이 존재하지 않습니다.")
 
-    # if not validate_api_key(API_KEY):
-    #     exit(1)  # 인증 실패 시 종료
+    print(API_KEY)
+
+    if not validate_api_key(API_KEY):
+        exit(1)  # 인증 실패 시 종료
     
     # 다중 경로 추적기 초기화
     tracker = MultiBusTracker(api_key=API_KEY)

@@ -64,8 +64,18 @@ class BusDataCollector:
                 self.set_tracking_stations()
 
     def get_route_id(self):
+
+        cache_path = "bus/data/bus_route_cache.json"
+        cache = self.load_cache(cache_path)
+
+        if self.bus_route_name in cache:
+            self.route_info = cache[self.bus_route_name]
+            self.bus_route_id = self.route_info.get("busRouteId")
+            logging.info(f"캐시된 노선 ID 사용: {self.bus_route_name} -> {self.bus_route_id}")
+            return True
+
         """버스 노선명으로 노선 ID 조회"""
-        url = "z"
+        url = "http://ws.bus.go.kr/api/rest/busRouteInfo/getBusRouteList"
         params = {
             "serviceKey": self.api_key,
             "strSrch": self.bus_route_name,
@@ -83,6 +93,10 @@ class BusDataCollector:
                     if item.get('busRouteNm') == self.bus_route_name:
                         self.bus_route_id = item.get('busRouteId')
                         self.route_info = item
+
+                        cache[self.bus_route_name] = item
+                        self.save_cache(cache_path, cache)
+
                         logging.info(f"노선 ID 확인: {self.bus_route_name} -> {self.bus_route_id}")
                         return True
 
@@ -97,6 +111,16 @@ class BusDataCollector:
             return False
 
     def get_station_list(self):
+
+        """버스 노선의 정류장 목록 조회 (공통 캐시 사용)"""
+        cache_path = "bus/data/station_cache.json"
+        cache = self.load_cache(cache_path)
+
+        if self.bus_route_name in cache:
+            self.station_list = cache[self.bus_route_name]
+            logging.info(f"캐시된 정류장 목록 사용: {self.bus_route_name} (총 {len(self.station_list)}개)")
+            return True
+
         """버스 노선의 정류장 목록 조회"""
         url = "http://ws.bus.go.kr/api/rest/busRouteInfo/getStaionByRoute"
         params = {
@@ -119,6 +143,9 @@ class BusDataCollector:
 #
                 #if len(items) > 5:
                 #    logging.info(f"... 외 {len(items) - 5}개 정류장")
+
+                cache[self.bus_route_name] = items
+                self.save_cache(cache_path, cache)
 
                 return True
             else:
@@ -491,6 +518,23 @@ class BusDataCollector:
             logging.error(f"가장 가까운 예측 시간 찾기 실패: {str(e)}")
         
         return None
+    
+    def load_cache(cache_path):
+        """캐시 파일을 안전하게 로드"""
+        if os.path.exists(cache_path):
+            try:
+                with open(cache_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception as e:
+                logging.warning(f"캐시 로딩 실패: {e}")
+        return {}
+    
+    def save_cache(cache_path, cache_data):
+        try:
+            with open(cache_path, 'w', encoding='utf-8') as f:
+                json.dump(cache_data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            logging.error(f"캐시 저장 실패: {e}")
 
 # 사용 예시
 if __name__ == "__main__":
