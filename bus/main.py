@@ -27,8 +27,8 @@ def main():
 
     print(API_KEY)
 
-    if not validate_api_key(API_KEY):
-        exit(1)  # 인증 실패 시 종료
+    # if not validate_api_key(API_KEY):
+    #     exit(1)  # 인증 실패 시 종료
     
     # 다중 경로 추적기 초기화
     tracker = MultiBusTracker(api_key=API_KEY)

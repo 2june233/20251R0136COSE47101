@@ -372,7 +372,7 @@ class BusDataCollector:
         """
         if not self.travel_records:
             logging.warning("비교할 소요 시간 기록이 없습니다.")
-            return None
+            return None, None
         
         results = []
     
@@ -519,6 +519,7 @@ class BusDataCollector:
         
         return None
     
+    @staticmethod
     def load_cache(cache_path):
         """캐시 파일을 안전하게 로드"""
         if os.path.exists(cache_path):
@@ -529,6 +530,7 @@ class BusDataCollector:
                 logging.warning(f"캐시 로딩 실패: {e}")
         return {}
     
+    @staticmethod
     def save_cache(cache_path, cache_data):
         try:
             with open(cache_path, 'w', encoding='utf-8') as f:
