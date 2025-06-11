@@ -84,8 +84,8 @@ class SubwayDelayAnalyzer:
         if updnLine is not None:
   
             updn_mapping = {
-                "상행": "UP", "내선": "UP",
-                "하행": "DOWN", "외선": "DOWN"
+                "상행": "UP", "내선": "IN",
+                "하행": "DOWN", "외선": "OUT"
             }
             
             tt_dir = updn_mapping[updnLine]
@@ -1250,12 +1250,12 @@ if __name__ == "__main__":
     
     date = '0529'
     time_of_day = 'morning'
-    delay_path = f'data/{date}/asof_delay_{date}_{time_of_day}.csv'
-    target_line = '1호선'
-    updnLine = '상행'  # 상행선 데이터만 분석. None 이면 전체 데이터
+    delay_path = f'data/{date}/delay_{date}_{time_of_day}.csv'
+    target_line = '2호선'
+    updnLine = '내선'  # 상행선 데이터만 분석. None 이면 전체 데이터
     express_code = 0 # 일반 열차만 분석. 1이면 급행열차만 분석. None 이면 전체 데이터
-    start_station = '노량진'
-    end_station = '신설동'
+    start_station = '건대입구'
+    end_station = '선릉'
     
     # 분석 실행 (예: 2호선)
     matched_data, train_timeseries = analyzer.analyze_line_delays(
@@ -1271,9 +1271,19 @@ if __name__ == "__main__":
         # 지연 시계열 데이터 저장
         analyzer.save_timeseries_data(train_timeseries, matched_data, save_format='json', filename=filename)
         
-        results, figures = analyzer.comprehensive_accumulation_analysis(train_timeseries, start_station, end_station)
+        #results, figures = analyzer.comprehensive_accumulation_analysis(train_timeseries, start_station, end_station)
 
-        for i, fig in enumerate(figures, 1):
-            if fig is not None:
-                plt.figure(i)
-                plt.show()
+        #for i, fig in enumerate(figures, 1):
+        #    if fig is not None:
+        #        plt.figure(i)
+        #        plt.show()
+
+        loaded_timeseries, metadata = analyzer.load_timeseries_data(f"{filename}.json", load_format='json')
+
+        # 개별 열차 상세 정보 출력
+        print("\n=== 개별 열차 상세 정보 ===")
+        for i, (train_no, data) in enumerate(list(loaded_timeseries.items())[:10]):
+            print(f"\n열차 {train_no} ({data['direction']}):")
+            for j, (station, delay, change) in enumerate(zip(data['stations'], data['delays'], data['delay_changes'])):
+                print(f"  역{j+1} {station}: {delay:+.0f}초 (변화: {change:+.0f}초)")
+            print(f"  패턴: {data['cumulative_pattern']}")

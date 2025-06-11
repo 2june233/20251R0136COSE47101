@@ -37,7 +37,7 @@ class MultiDaySubwayDelayAnalyzer(SubwayDelayAnalyzer):
 
         for date in dates:
             print(f"=== {date} 지연 분석 시작 ===")
-            delay_path = f"data/{date}/asof_delay_{date}_{time_of_day}.csv"
+            delay_path = f"data/{date}/delay_{date}_{time_of_day}.csv"
             print("1. 데이터 로딩...")
             delay = self.load_delay_data(delay_path)
         
@@ -82,10 +82,9 @@ class MultiDaySubwayDelayAnalyzer(SubwayDelayAnalyzer):
 if __name__ == "__main__":
     multiday_analyzer = MultiDaySubwayDelayAnalyzer()
 
-    dates = ["0526", "0528", "0529"]
+    dates = ["0526", "0528", "0529", "0530", "0602","0603", "0604", "0605","0606", "0609", "0610"]
     time_of_day = "morning"
     target_line = "1호선"
-    
     updnLine = "상행"
     express_code = 0  # 필요 시 지정
     start_station = '노량진'
