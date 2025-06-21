@@ -1,4 +1,4 @@
-subwayId,updnLine,statnNm,btrainSttus,btrainNo,bstatnNm,recptnDt,arvlCd
+﻿subwayId,updnLine,statnNm,btrainSttus,btrainNo,bstatnNm,recptnDt,arvlCd
 1004,하행,미아사거리,일반,4117,사당,2025-06-08 17:00:00,1
 1001,하행,종로5가,일반,0691,천안,2025-06-08 17:00:00,1
 1001,하행,서울,일반,0473,병점,2025-06-08 17:00:00,1
